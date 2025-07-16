@@ -4,7 +4,7 @@
     내용 : 3장 SQL 고급
 */
 
--- 실습하기 3-1. 테이블 생성 및 데이터 입력
+// 실습하기 1-1. 테이블 생성 및 데이터 입력
 
 CREATE TABLE EMP (
     EMPNO   NUMBER(4) PRIMARY KEY,
@@ -88,7 +88,7 @@ SELECT * FROM EMP WHERE NAME <> '김춘추';
 SELECT * FROM EMP WHERE JOB = '사원' AND DEPNO = 10;
 SELECT * FROM EMP WHERE JOB = '사원' OR JOB = '대리';
 SELECT * FROM EMP WHERE JOB IN ('사원', '대리');
-SELECT * FROM EMP WHERE DEPNO IN (101, 102, 103);
+SELECT * FROM EMP WHERE DEPNO IN (10, 20, 30);
 SELECT * FROM EMP WHERE NAME LIKE '김%';
 
 SELECT * FROM EMP WHERE NAME LIKE '%신';
@@ -123,7 +123,7 @@ SELECT * FROM SALE ORDER BY PRICE DESC;
 
 SELECT * FROM EMP ORDER BY NAME;
 SELECT * FROM EMP ORDER BY NAME DESC;
-SELECT * FROM EMP ORDER BY RDATE ASC;
+SELECT * FROM EMP ORDER BY REGDATE ASC;
 
 SELECT * FROM SALE WHERE PRICE > 50000 ORDER BY PRICE DESC;
 SELECT * FROM SALE
@@ -156,12 +156,268 @@ SELECT EMPNO E, NAME N, GENDER G FROM EMP;
 
 ----------------------------------------------------------------
 
-// 실습하기 2-4. 
+// 실습하기 3-1. 다양한 SQL 숫자 함수 실습 
 
+SELECT SUM(PRICE) AS 합계 FROM SALE;
+SELECT AVG(PRICE) AS 평균 FROM SALE;
+SELECT MAX(PRICE) AS "최대값" FROM SALE;
+SELECT MIN(PRICE) AS "최소값" FROM SALE;
+SELECT COUNT(*) AS 직원수 FROM SALE;
+SELECT COUNT(JOB) AS "정직원 수" FROM EMP;
 
+SELECT CEIL(1.2) FROM DUAL;
+SELECT CEIL(1.8) FROM DUAL;
+SELECT FLOOR(1.2) FROM DUAL;
+SELECT FLOOR(1.8) FROM DUAL;
+SELECT ROUND(1.2) FROM DUAL;
+SELECT ROUND(1.8) FROM DUAL;
+SELECT DBMS_RANDOM.VALUE FROM DUAL;
+SELECT CEIL(DBMS_RANDOM.VALUE * 10) FROM DUAL;
 
+----------------------------------------------------------------
 
+// 실습하기 3-2. 다양한 SQL 문자 함수 실습
 
+// LENGTH : 문자 길이
+SELECT 'HELLO ORACLE!', LENGHT('HELLO ORACLE!') FROM DUAL;
 
+// SUBSTR : 문자 자르기
+SELECT 
+    'HELLO ORACLE!', 
+    SUBSTR('HELLO ORACLE!', 1, 3),
+    SUBSTR('HELLO ORACLE!', 3, 2),
+    SUBSTR('HELLO ORACLE!', 5)
+FROM DUAL;
 
+// INSTR : 문자 위치
+SELECT
+    INSTR('HELLO ORACLE!', 'L') AS INSTR_1,
+    INSTR('HELLO ORACLE!', 'L', -1) AS INSTR_2
+FROM DUAL;
 
+// REPLACE : 문자 교체
+SELECT
+    '010-1234-5678',
+    REPLACE('010-1234-5678', '-', '')
+FROM DUAL;
+
+// LPAD, RPAD : 문자 채우기
+SELECT 
+    LPAD('Oracle', 10, '#') AS LPAD, 
+    RPAD('Oracle', 10, '*') AS RPAD 
+FROM DUAL;
+
+// CONCAT : 문자 연결
+SELECT CONCAT(EMPNO, NAME) FROM EMP WHERE NAME = '이순신';
+SELECT EMPNO || NAME FROM EMP WHERE NAME = '정약용';
+
+// TRIM : 문자 공백 제거
+SELECT
+    '[ _Oracle_ ]' AS BEFORE,
+    '[' || TRIM(' _Oracle_ ') || ']' AS TRIM
+FROM DUAL;
+
+----------------------------------------------------------------
+
+// 실습하기 3-3. SQL 날짜 함수 실습
+
+// SYSDATE : 현재 날짜와 시간 조회
+SELECT
+    SYSDATE,
+    SYSDATE -1,
+    SYSDATE +1
+FROM DUAL;
+
+// ADD_MONTHS(d, n) : 몇 개월 이후 날짜 조회
+SELECT
+    ADD_MONTHS(SYSDATE, 1),
+    ADD_MONTHS(SYSDATE, -1)
+FROM DUAL;
+
+// MONTH_BETWEEN(d1, d2) : 두 날짜 간 개월 수 계산
+SELECT
+    MONTHS_BETWEEN(DATE '2025-07-13', DATE '2024-07-13') AS 개월차
+FROM DUAL;
+
+// NEXT_DAY(d, '요일') : d 이후의 특정 요일 날짜
+SELECT
+    NEXT_DAY(SYSDATE, '월요일') AS 다음_월요일
+FROM DUAL;
+
+----------------------------------------------------------------
+
+// 실습하기 3-4. SQL 기타 함수 실습
+
+// TO_CHAR : 날짜 데이터를 문자 데이터로 변환
+SELECT
+    TO_CHAR(SYSDATE, 'YYYY') AS YYYY,
+    TO_CHAR(SYSDATE, 'MM') AS MM,
+    TO_CHAR(SYSDATE, 'DD') AS DD,
+    TO_CHAR(SYSDATE, 'HH24') AS HH24,
+    TO_CHAR(SYSDATE, 'MI') AS MI,
+    TO_CHAR(SYSDATE, 'SS') AS SS,
+    TO_CHAR(SYSDATE, 'YYYY/MM/DD HH24:MI:SS') AS 날짜시간
+FROM DUAL;
+
+INSERT INTO EMP VALUES (1011, '안중근', 'M', '부장', 30, TO_CHAR(SYSDATE, 'YYYY/MM/DD'));
+
+// TO_DATE : 문자 데이터를 날짜 데이터로 변환
+SELECT
+    TO_DATE('20250714', 'YYYY/MM/DD') AS 날짜1,
+    TO_DATE('250714', 'YY/MM/DD') AS 날짜2,
+    TO_DATE(SYSDATE, 'YYYY/MM/DD HH24:MI:SS') AS 날짜시간
+FROM DUAL;    
+
+INSERT INTO EMP VALUES (1012, '유관순', 'F', '차장', 20, SYSDATE);
+INSERT INTO EMP VALUES (1013, '윤봉길', 'M', '과장', 30, SYSDATE);
+
+// NVL, NVL2 : NULL 체크 함수                    
+SELECT
+    NO,
+    EMPNO,
+    YEAR,
+    MONTH,
+    NVL(PRICE, 0)
+FROM SALE;
+
+SELECT
+    EMPNO,
+    NAME,
+    GENDER,
+    JOB,
+    NVL2(DEPNO, '정규직', '비정규직')
+FROM EMP;
+
+----------------------------------------------------------------
+
+// 실습하기 4-1. 그룹화 실습(GROUP BY)
+
+SELECT EMPNO FROM SALE GROUP BY EMPNO;
+SELECT YEAR FROM SALE GROUP BY YEAR;
+SELECT EMPNO, YEAR FROM SALE GROUP BY EMPNO, YEAR;
+
+SELECT EMPNO, COUNT(*) AS 판매건수 FROM SALE GROUP BY EMPNO;
+SELECT EMPNO, SUM(PRICE) AS 합계 FROM SALE GROUP BY EMPNO;
+SELECT EMPNO, AVG(PRICE) AS 평균 FROM SALE GROUP BY EMPNO;
+
+SELECT EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    GROUP BY EMPNO, YEAR;
+    
+SELECT EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    GROUP BY EMPNO, YEAR
+    ORDER BY YEAR ASC, 합계 DESC;
+    
+SELECT EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    WHERE PRICE >= 50000
+    GROUP BY EMPNO, YEAR
+    ORDER BY YEAR ASC, 합계 DESC;
+  
+----------------------------------------------------------------
+  
+// 실습하기 4-2. 그룹화 조건 실습(HAVING)
+
+SELECT
+    EMPNO, SUM(PRICE) AS 합계 
+    FROM SALE
+    GROUP BY EMPNO
+    HAVING SUM(PRICE) // HAVING이 SELECT 보다 먼저 평가 되기 때문에 HAVING 절에는 '합계'를 사용할 수 없음
+    >= 200000;
+
+SELECT
+    EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    WHERE PRICE >= 100000
+    GROUP BY EMPNO, YEAR
+    HAVING SUM(PRICE) >= 200000
+    ORDER BY 합계 DESC; // 여기서는 합계 사용 가능
+
+----------------------------------------------------------------
+
+// 실습하기 5-1. 2023년도와 2024년도 매출 직원 목록 합치기(UNION)
+
+SELECT EMPNO, MONTH, PRICE FROM SALE WHERE YEAR = 2023
+UNION
+SELECT EMPNO, MONTH, PRICE FROM SALE WHERE YEAR = 2024;
+
+SELECT EMPNO, MONTH, PRICE FROM SALE WHERE YEAR = 2023
+UNION ALL
+SELECT EMPNO, MONTH, PRICE FROM SALE WHERE YEAR = 2024;
+
+SELECT
+    EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    WHERE YEAR = 2023
+    GROUP BY EMPNO, YEAR
+    UNION
+SELECT
+    EMPNO, YEAR, SUM(PRICE) AS 합계
+    FROM SALE
+    WHERE YEAR = 2024
+    GROUP BY EMPNO, YEAR
+    ORDER BY YEAR ASC, 합계 DESC;
+
+----------------------------------------------------------------
+
+// 실습하기 5-2. 2023년도와 2024년도를 모두 포함한 직원(INTERSECT)
+
+SELECT EMPNO FROM SALE WHERE YEAR = 2023
+INTERSECT
+SELECT EMPNO FROM SALE WHERE YEAR = 2024;
+
+----------------------------------------------------------------
+
+// 실습하기 5-3. 2023년도에만 있고 2024년도에는 없는 직원(MINUS)
+
+SELECT EMPNO FROM SALE WHERE YEAR = 2023
+MINUS
+SELECT EMPNO FROM SALE WHERE YEAR = 2024;
+
+----------------------------------------------------------------
+
+// 실습하기 6-1. 내부 조인 실습(INNER JOIN)
+
+SELECT
+    *
+    FROM EMP E
+    JOIN DEPT D
+    ON E.DEPNO = D.DEPTNO;
+
+SELECT
+    *
+    FROM EMP E
+    JOIN DEPT D
+    USING (DEPTNO); // 조인하려는 두 테이블에 공통의 컬럼명이 들어가야함(이번에는 불가)
+
+SELECT * FROM EMP E, DEPT D WHERE E.DEPNO = D.DEPTNO;
+
+SELECT
+    S.NO,
+    S.EMPNO,
+    E.NAME,
+    E.JOB,
+    E.REGDATE,
+    D.DNAME
+FROM SALE S
+JOIN EMP E ON S.EMPNO = E.EMPNO
+JOIN DEPT D ON E.DEPNO = D.DEPTNO
+WHERE PRICE > 100000 AND YEAR = 2024
+ORDER BY S.PRICE DESC;
+
+----------------------------------------------------------------
+
+// 실습하기 6-2. 외부 조인 실습(OUTER JOIN)
+
+DELETE FROM EMP WHERE EMPNO = 1006; -- 직원 한명 줄이기
+
+SELECT
+    *
+FROM SALE S
+LEFT JOIN EMP E ON S.EMPNO = E.EMPNO; -- AS 빼기
+    
+SELECT
+    *
+FROM SALE S
+RIGHT JOIN EMP E ON S.EMPNO = E.EMPNO;
