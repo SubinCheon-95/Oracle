@@ -1,0 +1,75 @@
+/*
+    날짜 : 2025/07/17
+    이름 : 천수빈
+    내용 : 5장 데이터베이스 객체
+*/
+
+-- 워크북 p.13
+-- 실습하기 3-1. 데이터 사전 조회(SYSTEM 접속)
+SELECT * FROM DICTIONARY;
+
+SELECT table_name FROM user_tables;
+SELECT OWNER, table_name FROM all_tables;
+SELECT * FROM dba_tables;
+SELECT * FROM dba_users;
+
+SELECT INSTANCE_NAME, STATUS, DATABASE_STATUS, HOST_NAME FROM V$INSTANCE;
+
+-- 실습하기 3-2. 인덱스 조회
+SELECT * FROM USER_INDEXES;
+SELECT * FROM USER_IND_COLUMNS;
+
+-- 실습하기 3-3. 인덱스 생성
+CREATE INDEX idx_user1_id on USER1(USER_ID);
+SELECT * FROM USER_IND_COLUMNS;
+
+-- 실습하기 3-4. 인덱스 삭제
+DROP INDEX IDX_USER1_ID;
+SELECT * FROM USER_IND_COLUMNS;
+
+-- 실습하기 3-6. 뷰 생성
+CREATE VIEW VM_USER1 AS (SELECT NAME, HP,AGE FROM USER1);
+CREATE VIEW VM_USER2_AGE_UNDER30 AS (SELECT * FROM USER2 WHERE AGE < 30);
+SELECT * FROM USER_VIEWS;
+
+-- 실습하기 3-7. 뷰 조회
+SELECT * FROM VW_USER1;
+SELECT * FROM VW_USER2_AGE_UNDER30;
+
+-- 실습하기 3-8. 뷰 삭제
+ADROP VIEW VW_USER1;
+ADROP VIEW VW_USER2_AGE_UNDER30;
+
+-- 실습하기 3-9. 시퀀스 적용 테이블 생성
+CREATE TABLE USER6 (
+    SEQ NUMBER PRIMARY KEY,
+    NAME VARCHAR2(20),                                         
+    GENDER CHAR(1),
+    AGE NUMBER,
+    ADDR VARCHAR(255)
+    );
+
+-- 실습하기 3-10. 시퀀스 생성
+CREATE SEQUENCE SEQ_USER6 INCREMENT BY 1 START WITH 1;
+
+-- 실습하기 3-11. 시퀀스값 입력
+INSERT INTO USER6 VALUES (SEQ_USER6.NEXTVAL, '김유신', 'M', 25, '김해시');
+INSERT INTO USER6 VALUES (SEQ_USER6.NEXTVAL, '김춘추', 'M', 23, '경주시');
+INSERT INTO USER6 VALUES (SEQ_USER6.NEXTVAL, '신사임당', 'F', 27, '강릉시');
+
+-- 실습하기 4-1. 사용자 생성
+// Oracle 에서 내부 스크립트 실행이나 일반 사용자 생성을 가능하게 하기 위한 세션 설정
+ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+CREATE USER test1 IDENTIFIED BY 1234;
+
+-- 실습하기 4-2
+SELECT * FROM all_tables;
+
+-- 실습하기 4-3
+ALTER USER test1 IDENTIFIED BY 1111;
+
+-- 실습하기 4-4
+GRANT CONNECT, RESOURCE TO test1;
+GRANT UNLIMITED TABLESPACE TO test1;
+
+GRANT CONNECT, RESOURCE, UNLIMITED TABLESPACE TO test1;
