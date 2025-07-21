@@ -68,6 +68,7 @@ UPDATE ENROLLMENT SET MID_SCORE = 16, FINAL_SCORE = 65 WHERE ENR_STDNO = '201203
 UPDATE ENROLLMENT SET MID_SCORE = 18, FINAL_SCORE = 38 WHERE ENR_STDNO = '20121016' AND ENR_CSID = 2312;
 UPDATE ENROLLMENT SET MID_SCORE = 25, FINAL_SCORE = 58 WHERE ENR_STDNO = '20130416' AND ENR_CSID = 3012;
 
+-- 실습 2-11
 UPDATE enrollment 
     SET TOTAL_SCORE = MID_SCORE + FINAL_SCORE,
     GRADE = CASE
@@ -80,8 +81,66 @@ END;
 
 SELECT * FROM ENROLLMENT;
 
+-- 실습 2-12
 SELECT * FROM ENROLLMENT ORDER BY TOTAL_SCORE DESC;
 
+-- 실습 2-13
 SELECT * FROM ENROLLMENT 
-    WHERE ENR_SCORE = '3012'
+    WHERE ENR_CSID = '3012'
     ORDER BY TOTAL_SCORE DESC;
+    
+-- 실습 2-14
+SELECT CS_ID, CS_NAME FROM COURSE
+    WHERE CS_NAME = '데이터베이스' OR cs_name = '프로그래밍언어';
+    
+-- 실습 2-15
+SELECT CS_NAME, CS_DEPT FROM COURSE;
+
+-- 실습 2-16
+SELECT STDNO, NAME FROM STUDENT ORDER BY NAME ASC;
+
+-- 실습 2-17
+SELECT DISTINCT ENR_STDNO FROM ENROLLMENT;
+
+-- 실습 2-18
+SELECT MAX(TOTAL_SCORE) AS "가장_큰_총점" FROM ENROLLMENT;
+
+-- 실습 2-19
+select major, count(stdno) as 학생수 from student Group by major;
+
+-- 실습 2-20
+select enr_csid, count(distinct enr_stdno) as 수강_학생수 
+    from enrollment 
+    group by enr_csid 
+    having count(enr_stdno) >= 2;
+
+-- 실습 2-21
+select
+    stdno,
+    name,
+    major,
+    enr_csid,
+    mid_score,
+    final_score,
+    total_score,
+    grade
+from Student S
+join enrollment E
+on s.stdno = e.enr_stdno;
+
+-- 실습 2-22
+select name, stdNo, enr_csid
+from student s
+join enrollment e
+on s.stdno = e.enr_stdno
+where enr_csid = '3012';
+
+-- 실습 2-23
+select 
+    stdNo,
+    Name,
+    count(stdNo) As 수강신청 건수,
+    sum(regTotalScore) as 종합점수,
+    sum(regTotalScore) / count(stdNo) as 평균
+from Student S
+Join Enrollment E on S.stdNo = E.enr_stdno
