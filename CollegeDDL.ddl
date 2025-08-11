@@ -91,7 +91,7 @@ select * from register;
 
 -- 2학년 학생의 학번, 이름, 학년, 수강 강좌명, 중간점수, 기말점수, 총합, 등급을 조회하시오.
 select
-    s.stdNo, s.stdName, stdYear, l.lecName, 
+    s.stdNo, s.stdName, s.stdYear, l.lecName, 
     r.regMidScore, r.regFinalScore, r.regTotalscore, r. regGrade
 from register r join student s on r.regStdNo = s.stdNo
                 join lecture l on r.regLecNo = l.lecNo
